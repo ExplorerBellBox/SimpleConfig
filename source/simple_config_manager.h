@@ -5,7 +5,11 @@
 namespace Simple
 {
 
+#ifdef _MSC_VER
+class ConfigManager final
+#else
 class __attribute__((visibility("default"), aligned(8))) ConfigManager final
+#endif
 {
 private:
 	using Mutex = std::mutex;
@@ -27,7 +31,7 @@ public:
 	ConfigManager &
 	operator=(const ConfigManager &) = delete;
 
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	Config *
 	GetConfig(const std::string &_file)
 	{
@@ -35,7 +39,7 @@ public:
 		return GetConfigNoLock(_file);
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	UpdateFile(const std::string &_file)
 	{
@@ -44,7 +48,7 @@ public:
 		return _config && _config->UpdateFile();
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	SetValue(const std::string &_file, const std::string &_section, const std::string &_key, const std::string &_value,
 			 const std::string &_comment = "", bool _replaceExistComment = false)
@@ -55,7 +59,7 @@ public:
 	}
 
 	template<typename T>
-	[[maybe_unused]] inline
+	E_MAYBE_UNSUED inline
 	bool
 	SetValue(const std::string &_file, const std::string &_section, const std::string &_key, T _value,
 			 const std::string &_comment = "", bool _replaceExistComment = false)
@@ -65,7 +69,7 @@ public:
 		return _config && _config->SetValue(_section, _key, _value, _comment, _replaceExistComment);
 	}
 
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	std::string
 	GetValue(const std::string &_file,
 			 const std::string &_default, const std::string &_section, const std::string &_key)
@@ -76,7 +80,7 @@ public:
 	}
 
 	template<typename T>
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	T
 	GetValue(const std::string &_file, T _default, const std::string &_section, const std::string &_key)
 	{
@@ -85,7 +89,7 @@ public:
 		return _config ? _config->GetValue(_default, _section, _key) : _default;
 	}
 
-	[[maybe_unused, nodiscard]]
+	E_MAYBE_UNSUED_NODISCARD
 	std::list<Config::KeyValue_t>
 	GetSection(const std::string &_file, const std::string &_section)
 	{
@@ -94,7 +98,7 @@ public:
 		return _config ? _config->GetSection(_section) : std::list<Config::KeyValue_t>{};
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	DeleteKey(const std::string &_file, const std::string &_section, const std::string &_key, bool _updateFile = true)
 	{
@@ -103,7 +107,7 @@ public:
 		return (nullptr == _config) || _config->DeleteKey(_section, _key, _updateFile);
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	DeleteSection(const std::string &_file, const std::string &_section, bool _updateFile = true)
 	{
@@ -115,7 +119,7 @@ public:
 private:
 	ConfigManager() = default;
 
-	[[nodiscard]] inline
+	E_NODISCARD inline
 	Config *
 	GetConfigNoLock(const std::string &_file)
 	{

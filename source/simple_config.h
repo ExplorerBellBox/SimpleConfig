@@ -10,10 +10,18 @@
 #include <regex>
 #include <unordered_map>
 
+#define E_MAYBE_UNSUED                 [[maybe_unused]]
+#define E_NODISCARD                    [[nodiscard]]
+#define E_MAYBE_UNSUED_NODISCARD       [[maybe_unused, nodiscard]]
+
 namespace Simple
 {
 
+#ifdef _MSC_VER
+class Config final
+#else
 class __attribute__((visibility("default"), aligned(8))) Config final
+#endif
 {
 public:
 	struct KeyValue_t final
@@ -97,7 +105,7 @@ public:
 	Config &
 	operator=(const Config &) = delete;
 
-	[[nodiscard]]
+	E_NODISCARD
 	bool
 	ReadFile(const std::string &_file)
 	{
@@ -139,7 +147,7 @@ public:
 		return true;
 	}
 
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	const std::string &
 	GetFile() const { return m_strFile; }
 
@@ -161,7 +169,7 @@ public:
 		return true;
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	SetValue(const std::string &_section, const std::string &_key, const std::string &_value,
 			 const std::string &_comment = "", bool _replaceExistComment = false)
@@ -199,7 +207,7 @@ public:
 		return true;
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	SetValue(const std::string &_section, const std::string &_key, const char *__restrict _value,
 			 const std::string &_comment = "", bool _replaceExistComment = false)
@@ -209,7 +217,7 @@ public:
 	}
 
 	template<typename T>
-	[[maybe_unused]] inline
+	E_MAYBE_UNSUED inline
 	bool
 	SetValue(const std::string &_section, const std::string &_key, T _value,
 			 const std::string &_comment = "", bool _replaceExistComment = false)
@@ -217,7 +225,7 @@ public:
 		return SetValue(_section, _key, std::to_string(_value), _comment, _replaceExistComment);
 	}
 
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	std::string
 	GetValue(const std::string &_default, const std::string &_section, const std::string &_key)
 	{
@@ -226,7 +234,7 @@ public:
 		return (_kv && !(_kv->strValue.empty())) ? _kv->strValue : _default;
 	}
 
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD [[maybe_unused]] inline
 	std::string
 	GetValue(const char *__restrict _default, const std::string &_section, const std::string &_key)
 	{
@@ -234,7 +242,7 @@ public:
 	}
 
 	template<typename T>
-	[[maybe_unused, nodiscard]] inline
+	E_MAYBE_UNSUED_NODISCARD inline
 	T
 	GetValue(T _default, const std::string &_section, const std::string &_key)
 	{
@@ -248,7 +256,7 @@ public:
 		return StringToNumber(_v, _value.c_str()) ? _v : _default;
 	}
 
-	[[maybe_unused, nodiscard]]
+	E_MAYBE_UNSUED_NODISCARD
 	std::list<KeyValue_t>
 	GetSection(const std::string &_section)
 	{
@@ -257,7 +265,7 @@ public:
 		return pSection ? pSection->listKeyValue : std::list<KeyValue_t>{};
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	DeleteKey(const std::string &_section, const std::string &_key, bool _updateFile = true)
 	{
@@ -280,7 +288,7 @@ public:
 		return !_updateFile || UpdateFile();
 	}
 
-	[[maybe_unused]]
+	E_MAYBE_UNSUED
 	bool
 	DeleteSection(const std::string &_section, bool _updateFile = true)
 	{
@@ -320,14 +328,14 @@ private:
 		}
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	bool
 	IsCommentLine(const std::string &_str)
 	{
 		return (';' == _str[0]) || ('#' == _str[0]);
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	bool
 	IsSectionLine(std::string &_section, const std::string &_str)
 	{
@@ -345,7 +353,7 @@ private:
 		return true;
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	bool
 	IsKeyValueLine(KeyValue_t &_kv, const std::string &_str)
 	{
@@ -361,7 +369,7 @@ private:
 		return true;
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	bool
 	IsValidSectionString(const std::string &_section)
 	{
@@ -374,7 +382,7 @@ private:
 		return std::regex_match(_section, _m, _reg);
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	bool
 	IsValidKeyString(const std::string &_key)
 	{
@@ -387,7 +395,7 @@ private:
 		return std::regex_match(_key, _m, _reg);
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	Section_t *
 	FindSection(const std::string &_section, Config_t &_config)
 	{
@@ -401,7 +409,7 @@ private:
 		return nullptr;
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	KeyValue_t *
 	FindKeyValue(const std::string &_key, Section_t &_section)
 	{
@@ -415,7 +423,7 @@ private:
 		return nullptr;
 	}
 
-	[[nodiscard]] static inline
+	E_NODISCARD static inline
 	KeyValue_t *
 	FindKeyValue(const std::string &_key, const std::string &_section, Config_t &_config)
 	{
@@ -423,7 +431,7 @@ private:
 		return pSection ? FindKeyValue(_key, *pSection) : nullptr;
 	}
 
-	[[nodiscard]]
+	E_NODISCARD
 	std::string
 	GetConfigString(Config_t &_config)
 	{
@@ -448,7 +456,7 @@ private:
 		return _ss.str();
 	}
 
-	[[nodiscard]] static
+	E_NODISCARD static
 	std::string
 	TrimLeftRightSpace(const std::string &_src)
 	{
@@ -480,7 +488,7 @@ private:
 		return std::string(_l, _r - _l + 1);
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(short &_v, const char *__restrict _str)
 	{
@@ -489,7 +497,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(unsigned short &_v, const char *__restrict _str)
 	{
@@ -498,7 +506,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(int &_v, const char *__restrict _str)
 	{
@@ -507,7 +515,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(unsigned int &_v, const char *__restrict _str)
 	{
@@ -516,7 +524,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(long long &_v, const char *__restrict _str)
 	{
@@ -525,7 +533,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(unsigned long long &_v, const char *__restrict _str)
 	{
@@ -534,7 +542,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(unsigned long &_v, const char *__restrict _str)
 	{
@@ -543,7 +551,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(float &_v, const char *__restrict _str)
 	{
@@ -552,7 +560,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(double &_v, const char *__restrict _str)
 	{
@@ -561,7 +569,7 @@ private:
 		return ((_str != _end) && ('\0' == *_end));
 	}
 
-	[[maybe_unused]] static inline
+	E_MAYBE_UNSUED static inline
 	bool
 	StringToNumber(long double &_v, const char *__restrict _str)
 	{
