@@ -485,7 +485,7 @@ private:
 			--_r;
 		}
 
-		return std::string(_l, _r - _l + 1);
+		return std::string{_l, static_cast<std::string::size_type>(_r - _l + 1)};
 	}
 
 	E_MAYBE_UNSUED static inline
